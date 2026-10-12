@@ -28,12 +28,12 @@ export class ReservationsComponent {
     { initials: 'FN', color: 'bg-[#e7e2ee] text-[#6b5b83]', name: 'Fátima Nunes', property: 'Casa de Praia do Mussulo', dates: '2 out. – 5 out., 2026', checkIn: '2026-10-02', checkOut: '2026-10-05', guests: '5 hóspedes', amount: 'Kz 450 000', status: 'Cancelada' },
   ];
   constructor(private readonly router: Router) {
-    const saved = JSON.parse(localStorage.getItem('sava-reservations') || '[]') as Array<{ property: string; guestName: string; checkIn: string; checkOut: string; guests: number; status: string }>;
-    const requests = JSON.parse(localStorage.getItem('sava-reservation-requests') || '[]') as Array<{ property: string; guestName: string; checkIn: string; checkOut: string; guests: number; status: string }>;
+    const saved = JSON.parse(localStorage.getItem('sava-reservations') || '[]') as Array<{ property: string; guestName: string; checkIn: string; checkOut: string; guests: number; totalPrice: number; status: string }>;
+    const requests = JSON.parse(localStorage.getItem('sava-reservation-requests') || '[]') as Array<{ property: string; guestName: string; checkIn: string; checkOut: string; guests: number; totalPrice: number; status: string }>;
     for (const item of [...requests, ...saved]) {
       const name = item.guestName || 'Hóspede';
       const status = (item.status === 'Confirmada' ? 'Confirmada' : 'Pendente') as ReservationStatus;
-      this.reservations.unshift({ initials: name.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase(), color: 'bg-[#e5ebdc] text-[#4b654c]', name, property: item.property, dates: `${this.formatShortDate(item.checkIn)} – ${this.formatShortDate(item.checkOut)}`, checkIn: item.checkIn, checkOut: item.checkOut, guests: `${item.guests} hóspedes`, amount: 'A confirmar', status });
+      this.reservations.unshift({ initials: name.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase(), color: 'bg-[#e5ebdc] text-[#4b654c]', name, property: item.property, dates: `${this.formatShortDate(item.checkIn)} – ${this.formatShortDate(item.checkOut)}`, checkIn: item.checkIn, checkOut: item.checkOut, guests: `${item.guests} hóspedes`, amount: item.totalPrice ? `Kz ${item.totalPrice.toLocaleString('pt-AO')}` : 'A confirmar', status });
     }
   }
   private formatShortDate(value: string): string {
