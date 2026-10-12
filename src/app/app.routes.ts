@@ -17,10 +17,24 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'reservations/new',
+    loadComponent: () =>
+      import('./reservations/reservation-create.component').then(
+        (m) => m.ReservationCreateComponent,
+      ),
+  },
+  {
     path: 'reservations',
     loadComponent: () =>
       import('./reservations/reservations.component').then(
         (m) => m.ReservationsComponent,
+      ),
+  },
+  {
+    path: 'booking/request/:token',
+    loadComponent: () =>
+      import('./reservations/booking-request.component').then(
+        (m) => m.BookingRequestComponent,
       ),
   },
   {

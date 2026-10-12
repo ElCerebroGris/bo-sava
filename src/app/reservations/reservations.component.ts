@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { SidebarComponent } from '../shared/sidebar.component';
 
 type ReservationStatus = 'Confirmada' | 'Alojada' | 'Próxima' | 'Pendente' | 'Concluída' | 'Cancelada';
 interface Reservation { initials: string; color: string; name: string; property: string; dates: string; checkIn: string; checkOut: string; guests: string; amount: string; status: ReservationStatus; }
 
 @Component({
-  selector: 'app-reservations', standalone: true, imports: [SidebarComponent, FormsModule],
+  selector: 'app-reservations', standalone: true, imports: [SidebarComponent, FormsModule, RouterLink],
   templateUrl: './reservations.component.html', styleUrl: './reservations.component.css'
 })
 export class ReservationsComponent {
@@ -26,7 +27,18 @@ export class ReservationsComponent {
     { initials: 'BM', color: 'bg-[#f1e8d9] text-[#886b38]', name: 'Beatriz Miguel', property: 'Casa do Miradouro', dates: '8 out. – 11 out., 2026', checkIn: '2026-10-08', checkOut: '2026-10-11', guests: '3 hóspedes', amount: 'Kz 186 000', status: 'Concluída' },
     { initials: 'FN', color: 'bg-[#e7e2ee] text-[#6b5b83]', name: 'Fátima Nunes', property: 'Casa de Praia do Mussulo', dates: '2 out. – 5 out., 2026', checkIn: '2026-10-02', checkOut: '2026-10-05', guests: '5 hóspedes', amount: 'Kz 450 000', status: 'Cancelada' },
   ];
-  constructor(private readonly router: Router) {}
+  constructor(private readonly router: Router) {
+    const saved = JSON.parse(localStorage.getItem('sava-reservations') || '[]') as Array<{ property: string; guestName: string; checkIn: string; checkOut: string; guests: number; status: string }>;
+    const requests = JSON.parse(localStorage.getItem('sava-reservation-requests') || '[]') as Array<{ property: string; guestName: string; checkIn: string; checkOut: string; guests: number; status: string }>;
+    for (const item of [...requests, ...saved]) {
+      const name = item.guestName || 'Hóspede';
+      const status = (item.status === 'Confirmada' ? 'Confirmada' : 'Pendente') as ReservationStatus;
+      this.reservations.unshift({ initials: name.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase(), color: 'bg-[#e5ebdc] text-[#4b654c]', name, property: item.property, dates: `${this.formatShortDate(item.checkIn)} – ${this.formatShortDate(item.checkOut)}`, checkIn: item.checkIn, checkOut: item.checkOut, guests: `${item.guests} hóspedes`, amount: 'A confirmar', status });
+    }
+  }
+  private formatShortDate(value: string): string {
+    return new Date(`${value}T12:00:00`).toLocaleDateString('pt-AO', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
   get periodReservations(): Reservation[] {
     if (this.activePeriod === 'Todas as datas') return this.reservations;
     const now = new Date();
