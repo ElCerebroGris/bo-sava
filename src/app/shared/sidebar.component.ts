@@ -19,14 +19,13 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
           <a routerLink="/dashboard" routerLinkActive="nav-active" class="nav-link"><span class="nav-icon">⌂</span>Visão geral</a>
           <a routerLink="/reservations" routerLinkActive="nav-active" class="nav-link"><span class="nav-icon">▤</span>Reservas<span class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[10px]">12</span></a>
           <a routerLink="/properties" routerLinkActive="nav-active" class="nav-link"><span class="nav-icon">⌂</span>Alojamentos</a>
-          <a href="#guests" class="nav-link"><span class="nav-icon">♧</span>Hóspedes</a>
-          <a href="#inbox" class="nav-link"><span class="nav-icon">◌</span>Mensagens<span class="ml-auto h-2 w-2 rounded-full bg-[#d5ed75]"></span></a>
+          <a routerLink="/guests" routerLinkActive="nav-active" class="nav-link"><span class="nav-icon">♧</span>Hóspedes</a>
         </nav>
         <div class="px-6 pb-3 pt-9 text-[10px] font-semibold uppercase tracking-[.18em] text-white/35">Gestão</div>
         <nav class="flex flex-col gap-1 px-3" aria-label="Navegação de gestão">
-          <a href="#analytics" class="nav-link"><span class="nav-icon">▥</span>Análises</a>
-          <a href="#payouts" class="nav-link"><span class="nav-icon">◈</span>Pagamentos</a>
-          <a href="#settings" class="nav-link"><span class="nav-icon">⚙</span>Definições</a>
+          <a routerLink="/analytics" routerLinkActive="nav-active" class="nav-link"><span class="nav-icon">▥</span>Análises</a>
+          <a routerLink="/payments" routerLinkActive="nav-active" class="nav-link"><span class="nav-icon">◈</span>Pagamentos</a>
+          <a routerLink="/settings" routerLinkActive="nav-active" class="nav-link"><span class="nav-icon">⚙</span>Definições</a>
         </nav>
       </div>
       <div class="mt-auto p-4">
