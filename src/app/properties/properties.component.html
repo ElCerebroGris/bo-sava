@@ -1,0 +1,282 @@
+<div class="app-shell min-h-screen bg-[#f7f8f4] text-[#24322d]">
+  <app-sidebar />
+  <main class="main-panel min-h-screen">
+    <header
+      class="topbar flex items-center justify-between border-b border-[#e9ece6] bg-white/80 px-8 py-4"
+    >
+      <div class="flex items-center gap-3 text-[13px] text-[#86918b]">
+        <span>Área de trabalho</span><span class="text-[#c5cbc5]">/</span
+        ><span class="font-medium text-[#24322d]">Alojamentos</span>
+      </div>
+      <div class="flex items-center gap-5">
+        <button
+          class="relative grid h-10 w-10 place-items-center rounded-full border border-[#e9ece6] text-lg text-[#59665f]"
+          aria-label="Notificações"
+        >
+          ♧<span
+            class="absolute right-2 top-2 h-2 w-2 rounded-full border-2 border-white bg-[#e88263]"
+          ></span>
+        </button>
+        <div class="relative border-l border-[#e9ece6] pl-5">
+          <button
+            type="button"
+            (click)="toggleProfileMenu()"
+            [attr.aria-expanded]="profileMenuOpen"
+            aria-haspopup="menu"
+            aria-label="Abrir menu do perfil"
+            class="flex items-center gap-3 rounded-xl py-1 text-left"
+          >
+            <span
+              class="grid h-9 w-9 place-items-center rounded-full bg-[#dce8d6] text-xs font-bold text-[#42624b]"
+              >MC</span
+            ><span class="hidden sm:block"
+              ><span class="block text-xs font-semibold">Marta Costa</span
+              ><span class="mt-0.5 block text-[11px] text-[#89948d]"
+                >Gestora de alojamentos</span
+              ></span
+            ><span class="text-xs text-[#89948d]">⌄</span>
+          </button>
+          @if (profileMenuOpen) {
+            <div
+              role="menu"
+              class="absolute right-0 top-full z-30 mt-3 w-52 overflow-hidden rounded-xl border border-[#e9ece6] bg-white p-1.5 shadow-xl"
+            >
+              <div class="border-b border-[#eef0ec] px-3 py-2.5">
+                <p class="text-xs font-semibold">Marta Costa</p>
+                <p class="mt-1 truncate text-[11px] text-[#89948d]">
+                  marta&#64;sava.ao
+                </p>
+              </div>
+              <button
+                type="button"
+                role="menuitem"
+                (click)="logout()"
+                class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-xs font-medium text-[#7d5149] hover:bg-[#fbf3f1]"
+              >
+                ↪ &nbsp; Terminar sessão
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    </header>
+
+    <div class="page-content mx-auto max-w-[1440px] px-8 py-8">
+      <section class="mb-7 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <div
+            class="mb-2 flex items-center gap-2 text-xs font-medium text-[#859088]"
+          >
+            <span class="h-2 w-2 rounded-full bg-[#7da16a]"></span>Gestão de
+            estadias
+          </div>
+          <h1 class="text-[29px] font-semibold tracking-[-.04em]">
+            Alojamentos
+          </h1>
+          <p class="mt-1 text-sm text-[#89948d]">
+            Gira os seus anúncios, disponibilidade e tarifas.
+          </p>
+        </div>
+        <button
+          type="button"
+          (click)="createProperty()"
+          class="inline-flex items-center gap-2 rounded-xl bg-[#203a32] px-4 py-3 text-xs font-semibold text-white shadow-sm transition hover:bg-[#2b4a40]"
+        >
+          <span class="text-base leading-none">＋</span> Adicionar alojamento
+        </button>
+      </section>
+
+      <section
+        class="mb-6 grid grid-cols-3 gap-4"
+        aria-label="Resumo dos alojamentos"
+      >
+        <article class="rounded-2xl border border-[#e9ece6] bg-white p-5">
+          <p class="text-xs font-medium text-[#859088]">Total de alojamentos</p>
+          <p class="mt-3 text-[27px] font-semibold tracking-[-.04em]">
+            {{ properties.length
+            }}<span
+              class="ml-2 text-xs font-normal tracking-normal text-[#89948d]"
+              >anúncios</span
+            >
+          </p>
+        </article>
+        <article class="rounded-2xl border border-[#e9ece6] bg-white p-5">
+          <p class="text-xs font-medium text-[#859088]">Publicados</p>
+          <div class="mt-3 flex items-center gap-2">
+            <p class="text-[27px] font-semibold tracking-[-.04em]">
+              {{ publishedCount }}
+            </p>
+            <span
+              class="rounded-full bg-[#eaf4df] px-2 py-1 text-[10px] font-medium text-[#56743e]"
+              >Visíveis para hóspedes</span
+            >
+          </div>
+        </article>
+        <article class="rounded-2xl border border-[#e9ece6] bg-white p-5">
+          <p class="text-xs font-medium text-[#859088]">Rascunhos</p>
+          <div class="mt-3 flex items-center gap-2">
+            <p class="text-[27px] font-semibold tracking-[-.04em]">
+              {{ draftCount }}
+            </p>
+            <span
+              class="rounded-full bg-[#f5eedc] px-2 py-1 text-[10px] font-medium text-[#8c7540]"
+              >Aguardam revisão</span
+            >
+          </div>
+        </article>
+      </section>
+
+      <section
+        class="overflow-hidden rounded-2xl border border-[#e9ece6] bg-white"
+      >
+        <div
+          class="flex flex-wrap items-center justify-between gap-4 border-b border-[#eef0ec] px-5 py-4"
+        >
+          <div>
+            <h2 class="text-sm font-semibold">Os seus alojamentos</h2>
+            <p class="mt-1 text-[11px] text-[#929b95]">
+              {{ filteredProperties.length }} resultados
+            </p>
+          </div>
+          <label
+            class="flex h-10 w-full items-center gap-2 rounded-xl border border-[#e5e9e3] px-3 text-[#89948d] sm:max-w-[270px]"
+            ><span>⌕</span
+            ><input
+              [value]="searchTerm"
+              (input)="searchTerm = $any($event.target).value"
+              aria-label="Pesquisar alojamentos"
+              placeholder="Pesquisar por nome ou localização"
+              class="w-full bg-transparent text-xs text-[#24322d] outline-none placeholder:text-[#a8b0aa]"
+          /></label>
+        </div>
+        <div
+          class="flex gap-1 border-b border-[#eef0ec] px-5 pt-3"
+          role="tablist"
+          aria-label="Filtrar alojamentos"
+        >
+          @for (filter of filters; track filter) {
+            <button
+              type="button"
+              role="tab"
+              [attr.aria-selected]="activeFilter === filter"
+              (click)="setFilter(filter)"
+              class="filter-tab"
+              [class.filter-tab-active]="activeFilter === filter"
+            >
+              {{ filter }}
+              <span class="ml-1 text-[10px] opacity-60">{{
+                filter === "Todos"
+                  ? properties.length
+                  : filter === "Publicado"
+                    ? publishedCount
+                    : draftCount
+              }}</span>
+            </button>
+          }
+        </div>
+        @if (filteredProperties.length) {
+          <div class="property-list divide-y divide-[#eef0ec]">
+            @for (property of filteredProperties; track property.name) {
+              <article
+                class="property-row flex flex-wrap items-center gap-4 px-5 py-4"
+              >
+                <div
+                  class="property-thumb shrink-0"
+                  [style.background-image]="
+                    'url(https://images.unsplash.com/' +
+                    property.image +
+                    '?auto=format&fit=crop&w=500&q=80)'
+                  "
+                >
+                  <span
+                    [class.draft-dot]="property.status === 'Rascunho'"
+                    class="status-dot"
+                  ></span>
+                </div>
+                <div class="min-w-[180px] flex-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <h3 class="text-sm font-semibold">{{ property.name }}</h3>
+                    <span
+                      [class]="
+                        'rounded-full px-2 py-1 text-[9px] font-semibold ' +
+                        (property.status === 'Publicado'
+                          ? 'bg-[#eaf4df] text-[#56743e]'
+                          : 'bg-[#f5eedc] text-[#8c7540]')
+                      "
+                      >{{ property.status }}</span
+                    >
+                  </div>
+                  <p class="mt-1 text-[11px] text-[#89948d]">
+                    {{ property.location }} <span class="mx-1">·</span>
+                    {{ property.kind }}
+                  </p>
+                </div>
+                <div class="property-metric">
+                  <span>Classificação</span
+                  ><strong
+                    >{{ property.rating }}
+                    <span class="text-[#bd9348]">{{
+                      property.reviews ? "★" : ""
+                    }}</span></strong
+                  ><small>{{ property.reviews }} avaliações</small>
+                </div>
+                <div class="property-metric">
+                  <span>Ocupação</span><strong>{{ property.occupancy }}</strong
+                  ><small>{{ property.bookings }} reservas este mês</small>
+                </div>
+                <div class="property-metric">
+                  <span>Preço por noite</span
+                  ><strong>{{ property.nightlyRate }}</strong
+                  ><small>por noite</small>
+                </div>
+                <button
+                  type="button"
+                  (click)="toggleStatus(property)"
+                  class="rounded-lg border border-[#e5e9e3] px-3 py-2 text-[10px] font-semibold text-[#59665f] transition hover:bg-[#f7f8f4]"
+                >
+                  {{
+                    property.status === "Publicado"
+                      ? "Colocar em rascunho"
+                      : "Publicar"
+                  }}
+                </button>
+                <button
+                  type="button"
+                  class="grid h-8 w-8 place-items-center rounded-lg text-[#89948d] hover:bg-[#f7f8f4]"
+                  [attr.aria-label]="'Mais opções para ' + property.name"
+                >
+                  ···
+                </button>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="px-6 py-16 text-center">
+            <span
+              class="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-[#f1f4ea] text-xl text-[#71865c]"
+              >⌕</span
+            >
+            <h3 class="mt-4 text-sm font-semibold">
+              Nenhum alojamento encontrado
+            </h3>
+            <p class="mt-1 text-xs text-[#89948d]">
+              Experimente alterar a pesquisa ou o filtro.
+            </p>
+          </div>
+        }
+      </section>
+      <footer class="py-6 text-center text-[10px] text-[#a2aaa4]">
+        Portal de Parceiros Sava <span class="mx-1">·</span> Feito para Angola
+      </footer>
+    </div>
+  </main>
+</div>
+
+@if (notice) {
+  <div
+    role="status"
+    class="fixed bottom-5 right-5 z-50 rounded-xl bg-[#203a32] px-4 py-3 text-xs font-medium text-white shadow-xl"
+  >
+    {{ notice }}
+  </div>
+}

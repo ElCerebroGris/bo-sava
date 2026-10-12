@@ -1,0 +1,368 @@
+<div class="app-shell min-h-screen bg-[#f7f8f4] text-[#24322d]">
+  <app-sidebar />
+  <main class="main-panel min-h-screen">
+    <header
+      class="topbar flex items-center justify-between border-b border-[#e9ece6] bg-white/80 px-8 py-4"
+    >
+      <div class="text-[13px] text-[#86918b]">
+        <a routerLink="/properties" class="hover:text-[#24322d]">Alojamentos</a
+        ><span class="mx-2">/</span
+        ><span class="font-medium text-[#24322d]">Novo alojamento</span>
+      </div>
+      <span class="text-xs text-[#89948d]"
+        >Rascunho guardado automaticamente nesta sessão</span
+      >
+    </header>
+    <div class="mx-auto max-w-5xl px-6 py-8 md:px-10">
+      <a routerLink="/properties" class="text-xs font-semibold text-[#71865c]"
+        >← Voltar aos alojamentos</a
+      >
+      <div class="mb-8 mt-5">
+        <p
+          class="text-xs font-semibold uppercase tracking-widest text-[#82927d]"
+        >
+          Novo anúncio · Passo {{ step }} de {{ steps.length }}
+        </p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight">
+          Conte-nos sobre o seu alojamento
+        </h1>
+        <p class="mt-2 text-sm text-[#89948d]">
+          Complete as etapas para preparar o anúncio para os hóspedes.
+        </p>
+      </div>
+      <nav
+        class="mb-8 grid grid-cols-3 gap-2 md:grid-cols-6"
+        aria-label="Etapas de criação"
+      >
+        @for (label of steps; track label; let i = $index) {
+          <button
+            type="button"
+            (click)="step = i + 1"
+            class="step-link"
+            [class.step-current]="step === i + 1"
+            [class.step-done]="step > i + 1"
+          >
+            <span class="step-number">{{ i + 1 }}</span
+            ><span>{{ label }}</span>
+          </button>
+        }
+      </nav>
+      <section
+        class="rounded-2xl border border-[#e9ece6] bg-white p-6 shadow-sm md:p-9"
+      >
+        @if (step === 1) {
+          <div>
+            <p class="step-kicker">ETAPA 1 · TIPO DE IMÓVEL</p>
+            <h2 class="step-title">Que tipo de alojamento vai anunciar?</h2>
+            <p class="step-copy">
+              Escolha a opção que melhor descreve o espaço oferecido.
+            </p>
+            <div class="mt-7 grid gap-4 md:grid-cols-2">
+              <button
+                type="button"
+                (click)="selectType('Apartamento')"
+                class="type-card"
+                [class.type-selected]="draft.type === 'Apartamento'"
+              >
+                <span class="type-icon">▦</span
+                ><span class="block text-base font-semibold">Apartamento</span
+                ><span class="mt-2 block text-xs leading-5 text-[#89948d]"
+                  >Uma unidade num edifício, condomínio ou prédio
+                  residencial.</span
+                ></button
+              ><button
+                type="button"
+                (click)="selectType('Casa')"
+                class="type-card"
+                [class.type-selected]="draft.type === 'Casa'"
+              >
+                <span class="type-icon">⌂</span
+                ><span class="block text-base font-semibold">Casa</span
+                ><span class="mt-2 block text-xs leading-5 text-[#89948d]"
+                  >Uma moradia independente, vivenda ou casa de férias.</span
+                >
+              </button>
+            </div>
+          </div>
+        }
+        @if (step === 2) {
+          <div>
+            <p class="step-kicker">ETAPA 2 · CARACTERÍSTICAS</p>
+            <h2 class="step-title">Descreva o espaço</h2>
+            <p class="step-copy">
+              Estes dados ajudam os hóspedes a perceber se o alojamento é
+              adequado.
+            </p>
+            <div class="mt-7 grid gap-5 md:grid-cols-2">
+              <label class="field md:col-span-2"
+                >Nome do alojamento<input
+                  name="name"
+                  [(ngModel)]="draft.name"
+                  placeholder="Ex.: Apartamento Baía de Luanda"
+                  required /></label
+              ><label class="field"
+                >Quartos
+                <div class="counter">
+                  <button
+                    type="button"
+                    (click)="draft.bedrooms = Math.max(0, draft.bedrooms - 1)"
+                  >
+                    −</button
+                  ><span>{{ draft.bedrooms }}</span
+                  ><button
+                    type="button"
+                    (click)="draft.bedrooms = draft.bedrooms + 1"
+                  >
+                    ＋
+                  </button>
+                </div></label
+              ><label class="field"
+                >Casas de banho
+                <div class="counter">
+                  <button
+                    type="button"
+                    (click)="draft.bathrooms = Math.max(1, draft.bathrooms - 1)"
+                  >
+                    −</button
+                  ><span>{{ draft.bathrooms }}</span
+                  ><button
+                    type="button"
+                    (click)="draft.bathrooms = draft.bathrooms + 1"
+                  >
+                    ＋
+                  </button>
+                </div></label
+              ><label class="field"
+                >Capacidade de hóspedes<input
+                  type="number"
+                  min="1"
+                  [(ngModel)]="draft.guests"
+                  name="guests" /></label
+              ><label class="field"
+                >Área aproximada (m²)<input
+                  type="number"
+                  min="1"
+                  [(ngModel)]="draft.area"
+                  name="area"
+                  placeholder="Ex.: 85"
+              /></label>
+              @if (!isHouse) {
+                <label class="field"
+                  >Andar<input
+                    [(ngModel)]="draft.floor"
+                    name="floor"
+                    placeholder="Ex.: 4.º andar"
+                /></label>
+              }
+              <label class="field md:col-span-2"
+                >Descrição<textarea
+                  rows="4"
+                  [(ngModel)]="draft.description"
+                  name="description"
+                  placeholder="O que torna este alojamento especial?"
+                ></textarea>
+              </label>
+            </div>
+          </div>
+        }
+        @if (step === 3) {
+          <div>
+            <p class="step-kicker">ETAPA 3 · LOCALIZAÇÃO</p>
+            <h2 class="step-title">Onde fica o alojamento?</h2>
+            <p class="step-copy">
+              A localização exacta só será partilhada com hóspedes com reserva
+              confirmada.
+            </p>
+            <div class="mt-7 grid gap-5 md:grid-cols-2">
+              <label class="field"
+                >Província<select [(ngModel)]="draft.province" name="province">
+                  <option>Luanda</option>
+                  <option>Benguela</option>
+                  <option>Huíla</option>
+                  <option>Namibe</option>
+                  <option>Cabinda</option>
+                  <option>Huambo</option>
+                  <option>Outra</option>
+                </select></label
+              ><label class="field"
+                >Cidade ou município<input
+                  [(ngModel)]="draft.city"
+                  name="city"
+                  placeholder="Ex.: Luanda"
+                  required /></label
+              ><label class="field"
+                >Bairro<input
+                  [(ngModel)]="draft.neighborhood"
+                  name="neighborhood"
+                  placeholder="Ex.: Ilha de Luanda" /></label
+              ><label class="field"
+                >Endereço (opcional)<input
+                  [(ngModel)]="draft.address"
+                  name="address"
+                  placeholder="Rua e número"
+              /></label>
+              <div class="map-placeholder md:col-span-2">
+                <span class="text-3xl">⌖</span>
+                <p class="mt-2 text-sm font-semibold">
+                  Pré-visualização da localização
+                </p>
+                <p class="mt-1 text-xs">
+                  {{ draft.neighborhood || "Bairro" }},
+                  {{ draft.city || "Cidade" }}, {{ draft.province }}
+                </p>
+              </div>
+            </div>
+          </div>
+        }
+        @if (step === 4) {
+          <div>
+            <p class="step-kicker">ETAPA 4 · COMODIDADES</p>
+            <h2 class="step-title">O que oferece aos hóspedes?</h2>
+            <p class="step-copy">
+              Seleccione todas as comodidades disponíveis no seu alojamento.
+            </p>
+            <div class="mt-7 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+              @for (amenity of amenitiesList; track amenity) {
+                <button
+                  type="button"
+                  (click)="toggleAmenity(amenity)"
+                  class="amenity-option"
+                  [class.amenity-selected]="draft.amenities.includes(amenity)"
+                >
+                  <span class="amenity-check">{{
+                    draft.amenities.includes(amenity) ? "✓" : "+"
+                  }}</span
+                  >{{ amenity }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+        @if (step === 5) {
+          <div>
+            <p class="step-kicker">ETAPA 5 · FOTOGRAFIAS</p>
+            <h2 class="step-title">Mostre o seu alojamento</h2>
+            <p class="step-copy">
+              Anúncios com fotografias claras recebem mais reservas.
+            </p>
+            <label class="upload-zone mt-7"
+              ><span class="text-3xl">⇧</span
+              ><span class="mt-3 text-sm font-semibold"
+                >Adicionar fotografias</span
+              ><span class="mt-1 text-xs text-[#89948d]"
+                >Seleccione imagens do seu dispositivo (JPG ou PNG)</span
+              ><input
+                type="file"
+                accept="image/*"
+                multiple
+                class="sr-only"
+                (change)="
+                  draft.photos =
+                    $any($event.target).files.length +
+                    ' fotografia(s) seleccionada(s)'
+                "
+            /></label>
+            <p class="mt-4 text-xs text-[#71865c]">
+              {{ draft.photos || "Ainda não foram seleccionadas fotografias." }}
+            </p>
+            <p
+              class="mt-5 rounded-xl bg-[#f7f8f4] p-4 text-xs leading-5 text-[#89948d]"
+            >
+              Dica: fotografe cada divisão com luz natural e mantenha o espaço
+              arrumado. Pode adicionar ou alterar imagens mais tarde.
+            </p>
+          </div>
+        }
+        @if (step === 6) {
+          <div>
+            <p class="step-kicker">ETAPA 6 · PREÇO E PUBLICAÇÃO</p>
+            <h2 class="step-title">Defina o preço por noite</h2>
+            <p class="step-copy">
+              Pode ajustar o preço e a disponibilidade a qualquer momento.
+            </p>
+            <div class="mt-7 grid gap-6 md:grid-cols-2">
+              <label class="field"
+                >Preço por noite (Kz)
+                <div class="price-input">
+                  <span>Kz</span
+                  ><input
+                    type="number"
+                    min="1"
+                    [(ngModel)]="draft.nightlyRate"
+                    name="nightlyRate"
+                    placeholder="Ex.: 45 000"
+                    required
+                  /></div
+              ></label>
+              <div class="rounded-xl bg-[#f7f8f4] p-5">
+                <p class="text-xs font-semibold">Resumo do anúncio</p>
+                <p class="mt-3 text-sm font-semibold">
+                  {{ draft.name || "Nome do alojamento" }}
+                </p>
+                <p class="mt-1 text-xs text-[#89948d]">
+                  {{ draft.type }} ·
+                  {{
+                    draft.neighborhood ||
+                      draft.city ||
+                      "Localização por definir"
+                  }}
+                </p>
+                <p class="mt-3 text-xs text-[#89948d]">
+                  {{ draft.bedrooms }} quartos · {{ draft.bathrooms }} casas de
+                  banho · até {{ draft.guests }} hóspedes
+                </p>
+                <p class="mt-3 text-xs text-[#71865c]">
+                  {{ draft.amenities.length }} comodidades seleccionadas
+                </p>
+              </div>
+            </div>
+            <div class="mt-6 rounded-xl border border-[#e9ece6] p-4">
+              <p class="text-xs font-semibold">Pronto para receber hóspedes?</p>
+              <p class="mt-1 text-xs text-[#89948d]">
+                Publique agora ou guarde como rascunho para completar mais
+                tarde.
+              </p>
+            </div>
+          </div>
+        }
+        <div
+          class="mt-9 flex flex-wrap items-center justify-between gap-3 border-t border-[#eef0ec] pt-5"
+        >
+          <button type="button" (click)="saveDraft()" class="secondary-button">
+            Guardar rascunho
+          </button>
+          <div class="ml-auto flex gap-2">
+            <button
+              type="button"
+              (click)="back()"
+              [disabled]="step === 1"
+              class="secondary-button"
+            >
+              Anterior
+            </button>
+            @if (step < steps.length) {
+              <button type="button" (click)="next()" class="primary-button">
+                Continuar <span>→</span>
+              </button>
+            } @else {
+              <button type="button" (click)="publish()" class="primary-button">
+                Publicar alojamento
+              </button>
+            }
+          </div>
+        </div>
+      </section>
+      <footer class="py-6 text-center text-[10px] text-[#a2aaa4]">
+        Portal de Parceiros Sava · Feito para Angola
+      </footer>
+    </div>
+  </main>
+</div>
+@if (notice) {
+  <div
+    role="alert"
+    class="fixed bottom-5 right-5 z-50 rounded-xl bg-[#7d5149] px-4 py-3 text-xs font-medium text-white shadow-xl"
+  >
+    {{ notice }}
+  </div>
+}
