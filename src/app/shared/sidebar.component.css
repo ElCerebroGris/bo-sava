@@ -1,0 +1,37 @@
+.sidebar-menu-toggle {
+  display: none;
+}
+@media (max-width: 720px) {
+  .sidebar-menu-toggle {
+    position: absolute;
+    right: 16px;
+    top: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    padding: 8px 11px;
+    background: rgba(255, 255, 255, 0.06);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .sidebar-menu-toggle span:first-child {
+    font-size: 16px;
+    line-height: 1;
+  }
+  .sidebar-navigation {
+    display: none !important;
+    padding: 0 0 14px;
+  }
+  .sidebar.menu-open .sidebar-navigation {
+    display: block !important;
+  }
+  .sidebar.menu-open {
+    box-shadow: 0 8px 24px rgba(20, 35, 29, 0.12);
+  }
+  .sidebar.menu-open .brand {
+    padding-bottom: 14px;
+  }
+}

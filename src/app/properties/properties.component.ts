@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { SidebarComponent } from '../shared/sidebar.component';
+import { RouterLink } from '@angular/router';
 
 type PropertyStatus = 'Publicado' | 'Rascunho';
 interface PropertyListing {
@@ -19,7 +20,7 @@ interface PropertyListing {
 @Component({
   selector: 'app-properties',
   standalone: true,
-  imports: [SidebarComponent],
+  imports: [SidebarComponent, RouterLink],
   templateUrl: './properties.component.html',
   styleUrl: './properties.component.css'
 })
@@ -42,7 +43,9 @@ export class PropertiesComponent {
     this.notice = state['notice'] || '';
     const saved = JSON.parse(localStorage.getItem('sava-properties') || '[]') as Array<{ name: string; type: string; city: string; neighborhood: string; nightlyRate: number; status: PropertyStatus }>;
     for (const item of saved) {
-      this.properties.unshift({ name: item.name, location: [item.neighborhood, item.city].filter(Boolean).join(', '), image: 'photo-1600210492486-724fe5c67fb0', status: item.status, rating: '—', reviews: 0, occupancy: '—', bookings: 0, nightlyRate: item.nightlyRate ? `Kz ${item.nightlyRate.toLocaleString('pt-AO')}` : 'A definir', kind: item.type });
+      const existing = this.properties.find((property) => property.name === item.name);
+      const updated = { name: item.name, location: [item.neighborhood, item.city].filter(Boolean).join(', '), image: 'photo-1600210492486-724fe5c67fb0', status: item.status, rating: '—', reviews: 0, occupancy: '—', bookings: 0, nightlyRate: item.nightlyRate ? ('Kz ' + item.nightlyRate.toLocaleString('pt-AO')) : 'A definir', kind: item.type };
+      if (existing) Object.assign(existing, updated); else this.properties.unshift(updated);
     }
   }
 
@@ -68,6 +71,7 @@ export class PropertiesComponent {
   }
 
   createProperty(): void { this.router.navigate(['/properties/new']); }
+  propertyId(property: PropertyListing): string { return property.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
 
   private clearNotice(): void {
     window.setTimeout(() => this.notice = '', 3000);

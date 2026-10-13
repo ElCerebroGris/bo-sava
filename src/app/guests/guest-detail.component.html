@@ -1,0 +1,14 @@
+<div class="app-shell min-h-screen bg-[#f7f8f4] text-[#24322d]"><app-sidebar/><main class="main-panel min-h-screen">
+  <header class="topbar flex items-center justify-between border-b border-[#e9ece6] bg-white/80 px-8 py-4"><div class="flex items-center gap-3 text-[13px] text-[#86918b]"><a routerLink="/guests">Hóspedes</a><span>/</span><span class="font-medium text-[#24322d]">Detalhes</span></div><app-profile-menu/></header>
+  <div class="page-content">
+    @if (guest) {
+      <a routerLink="/guests" class="back-link">← Voltar à lista de hóspedes</a>
+      <section class="guest-profile mt-5"><span class="guest-avatar">{{initials}}</span><div><p class="text-xs font-medium text-[#859088]">Perfil do hóspede</p><h1 class="mt-1 text-[26px] font-semibold tracking-[-.04em]">{{guest.name}}</h1><p class="mt-1 text-sm text-[#89948d]">{{guest.contact}}</p></div></section>
+      <section class="mt-6 grid grid-cols-2 gap-4 sm:max-w-xl"><article class="summary-card"><span>Total de reservas</span><strong>{{bookings.length || (guest.id === 'joao-manuel' ? 3 : guest.id === 'ana-martins' || guest.id === 'filipa-costa' ? 2 : 1)}}</strong></article><article class="summary-card"><span>Última estadia</span><strong class="text-base">{{bookings.length ? formatDate(bookings[bookings.length - 1].checkIn) : 'Sem histórico local'}}</strong></article></section>
+      <section class="mt-6 overflow-hidden rounded-2xl border border-[#e9ece6] bg-white"><div class="border-b border-[#eef0ec] px-5 py-4"><h2 class="text-sm font-semibold">Histórico de reservas</h2><p class="mt-1 text-[11px] text-[#929b95]">Estadias associadas a este hóspede</p></div>
+        @if (bookings.length) {<div class="table-scroll"><table class="w-full border-collapse text-left"><thead><tr class="table-head"><th>ALOJAMENTO</th><th>ENTRADA</th><th>SAÍDA</th><th>HÓSPEDES</th><th>VALOR</th><th>ESTADO</th></tr></thead><tbody>@for (booking of bookings; track booking.checkIn) {<tr class="data-row"><td>{{booking.property}}</td><td>{{formatDate(booking.checkIn)}}</td><td>{{formatDate(booking.checkOut)}}</td><td>{{booking.guests}}</td><td>{{formatPrice(booking.totalPrice)}}</td><td>{{booking.status}}</td></tr>}</tbody></table></div>} @else {<p class="p-8 text-center text-xs text-[#89948d]">Este perfil é demonstrativo; o histórico detalhado aparecerá quando houver reservas guardadas para este hóspede.</p>}
+      </section>
+    } @else {<section class="mt-6 rounded-2xl border border-[#e9ece6] bg-white p-10 text-center"><h1 class="text-lg font-semibold">Hóspede não encontrado</h1><a routerLink="/guests" class="back-link mt-4 inline-flex">Voltar aos hóspedes</a></section>}
+    <footer class="py-6 text-center text-[10px] text-[#a2aaa4]">Portal de Parceiros Sava · Feito para Angola</footer>
+  </div>
+</main></div>

@@ -9,6 +9,7 @@ export const routes: Routes = [
         (m) => m.DashboardComponent,
       ),
   },
+  { path: 'guests/:id', loadComponent: () => import('./guests/guest-detail.component').then((m) => m.GuestDetailComponent) },
   { path: 'guests', loadComponent: () => import('./guests/guests.component').then((m) => m.GuestsComponent) },
   { path: 'analytics', loadComponent: () => import('./analytics/analytics.component').then((m) => m.AnalyticsComponent) },
   { path: 'payments', loadComponent: () => import('./payments/payments.component').then((m) => m.PaymentsComponent) },
@@ -25,6 +26,13 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./reservations/reservation-create.component').then(
         (m) => m.ReservationCreateComponent,
+      ),
+  },
+  {
+    path: 'reservations/:id',
+    loadComponent: () =>
+      import('./reservations/reservation-detail.component').then(
+        (m) => m.ReservationDetailComponent,
       ),
   },
   {
@@ -46,6 +54,13 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./properties/property-create.component').then(
         (m) => m.PropertyCreateComponent,
+      ),
+  },
+  {
+    path: 'properties/:id',
+    loadComponent: () =>
+      import('./properties/property-detail.component').then(
+        (m) => m.PropertyDetailComponent,
       ),
   },
   {

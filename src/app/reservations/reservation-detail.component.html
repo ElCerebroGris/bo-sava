@@ -1,0 +1,32 @@
+<div class="app-shell min-h-screen bg-[#f7f8f4] text-[#24322d]">
+  <app-sidebar />
+  <main class="main-panel min-h-screen">
+    <header class="topbar flex items-center justify-between border-b border-[#e9ece6] bg-white/80 px-8 py-4">
+      <div class="text-[13px] text-[#86918b]"><a routerLink="/reservations" class="hover:text-[#24322d]">Reservas</a><span class="mx-2">/</span><span class="font-medium text-[#24322d]">Detalhes</span></div>
+      <a routerLink="/reservations" class="text-xs font-semibold text-[#71865c]">Voltar à lista</a>
+    </header>
+    <div class="page-content mx-auto max-w-[1100px] px-8 py-8">
+      @if (reservation) {
+        <a routerLink="/reservations" class="text-xs font-semibold text-[#71865c]">← Todas as reservas</a>
+        <section class="mt-5 flex flex-wrap items-start justify-between gap-4">
+          <div><p class="text-xs font-medium text-[#859088]">Reserva {{reservation.id.slice(0, 8).toUpperCase()}}</p><h1 class="mt-2 text-[29px] font-semibold tracking-[-.04em]">{{reservation.guestName}}</h1><p class="mt-1 text-sm text-[#89948d]">{{reservation.property}}</p></div>
+          <span class="status-pill" [class.status-pending]="reservation.status === 'Pendente'" [class.status-cancelled]="reservation.status === 'Cancelada'">{{reservation.status}}</span>
+        </section>
+        <div class="detail-grid mt-7">
+          <section class="space-y-5">
+            <article class="detail-card"><h2>Detalhes da estadia</h2><div class="stay-dates mt-5"><div><small>Entrada</small><strong>{{formatDate(reservation.checkIn)}}</strong><span> A partir das 14:00</span></div><div class="night-count">{{nights}} noites</div><div><small>Saída</small><strong>{{formatDate(reservation.checkOut)}}</strong><span> Até às 11:00</span></div></div><div class="info-row mt-5"><span>Hóspedes</span><strong>{{reservation.guests}} {{reservation.guests === 1 ? 'hóspede' : 'hóspedes'}}</strong></div></article>
+            <article class="detail-card"><h2>Hóspede</h2><div class="mt-4 flex items-center gap-3"><span class="guest-avatar">{{guestInitials}}</span><div><strong class="block text-sm">{{reservation.guestName}}</strong><span class="mt-1 block text-xs text-[#89948d]">{{reservation.guestContact || 'Contacto não fornecido'}}</span></div></div><a class="mt-4 inline-flex text-xs font-semibold text-[#71865c]" routerLink="/guests">Ver perfil do hóspede →</a></article>
+          </section>
+          <aside class="detail-card h-fit"><h2>Resumo do pagamento</h2><div class="info-row mt-5"><span>{{nights}} noites</span><strong>{{formatPrice(reservation.totalPrice)}}</strong></div><div class="info-row mt-3"><span>Método de pagamento</span><strong>{{reservation.paymentMethod || 'A confirmar'}}</strong></div><div class="info-row total-row mt-5"><span>Total da reserva</span><strong>{{formatPrice(reservation.totalPrice)}}</strong></div><p class="mt-4 text-[11px] leading-5 text-[#89948d]">Os pagamentos são apresentados como dados demonstrativos do PoC.</p></aside>
+        </div>
+        @if (reservation.status !== 'Cancelada' && reservation.status !== 'Concluída') {
+          <section class="detail-card mt-5"><h2>Acções da reserva</h2><p class="mt-1 text-xs text-[#89948d]">Actualize o estado conforme a estadia avança.</p><div class="mt-4 flex flex-wrap gap-2">@if (reservation.status === 'Pendente') {<button class="primary-action" (click)="setStatus('Confirmada')">Confirmar reserva</button>}@if (reservation.status === 'Confirmada' || reservation.status === 'Próxima') {<button class="primary-action" (click)="setStatus('Alojada')">Registar entrada</button>}@if (reservation.status === 'Alojada') {<button class="primary-action" (click)="setStatus('Concluída')">Concluir estadia</button>}<button class="cancel-action" (click)="setStatus('Cancelada')">Cancelar reserva</button></div></section>
+        }
+      } @else {
+        <section class="detail-card mt-6 text-center"><h1 class="text-xl font-semibold">Reserva não encontrada</h1><p class="mt-2 text-sm text-[#89948d]">Esta reserva pode ter sido removida ou o link está inválido.</p><a routerLink="/reservations" class="primary-action mt-5 inline-flex">Voltar às reservas</a></section>
+      }
+      @if (notice) {<div role="status" class="fixed bottom-5 right-5 rounded-xl bg-[#203a32] px-4 py-3 text-xs font-medium text-white shadow-xl">{{notice}}</div>}
+      <footer class="py-7 text-center text-[10px] text-[#a2aaa4]">Portal de Parceiros Sava · Feito para Angola</footer>
+    </div>
+  </main>
+</div>

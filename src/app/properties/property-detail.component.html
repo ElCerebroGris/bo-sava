@@ -1,0 +1,229 @@
+<div class="app-shell min-h-screen bg-[#f7f8f4] text-[#24322d]">
+  <app-sidebar />
+  <main class="main-panel min-h-screen">
+    <header
+      class="topbar flex items-center justify-between border-b border-[#e9ece6] bg-white/80 px-8 py-4"
+    >
+      <div class="text-[13px] text-[#86918b]">
+        <a routerLink="/properties">Alojamentos</a><span class="mx-2">/</span
+        ><span class="font-medium text-[#24322d]">Detalhes e edição</span>
+      </div>
+      <a routerLink="/properties" class="text-xs font-semibold text-[#71865c]"
+        >Voltar à lista</a
+      >
+    </header>
+    <div class="page-content mx-auto max-w-[1100px] px-8 py-8">
+      @if (property) {
+        <a routerLink="/properties" class="back-link">← Todos os alojamentos</a>
+        <section
+          class="mb-6 mt-5 flex flex-wrap items-end justify-between gap-4"
+        >
+          <div>
+            <p class="text-xs font-medium text-[#859088]">
+              {{ property.type }} · {{ property.status }}
+            </p>
+            <h1 class="mt-2 text-[29px] font-semibold tracking-[-.04em]">
+              {{ property.name }}
+            </h1>
+            <p class="mt-1 text-sm text-[#89948d]">
+              {{ property.neighborhood }}, {{ property.city }}
+            </p>
+          </div>
+          <span
+            class="status-pill"
+            [class.draft-pill]="property.status === 'Rascunho'"
+            >{{ property.status }}</span
+          >
+        </section>
+        <form (ngSubmit)="save()" class="space-y-5">
+          <section class="edit-card">
+            <h2>Informações principais</h2>
+            <p class="card-copy">Actualize os dados apresentados no anúncio.</p>
+            <div class="mt-5 grid gap-5 sm:grid-cols-2">
+              <label class="field sm:col-span-2"
+                >Nome do alojamento<input
+                  [(ngModel)]="property.name"
+                  name="name"
+                  required /></label
+              ><label class="field"
+                >Tipo<select [(ngModel)]="property.type" name="type">
+                  <option>Apartamento</option>
+                  <option>Casa</option>
+                  <option>Moradia inteira</option>
+                  <option>Casa de praia</option>
+                </select></label
+              ><label class="field"
+                >Preço por noite (Kz)<input
+                  type="number"
+                  min="1"
+                  [(ngModel)]="property.nightlyRate"
+                  name="nightlyRate"
+                  required /></label
+              ><label class="field"
+                >Quartos<input
+                  type="number"
+                  min="0"
+                  [(ngModel)]="property.bedrooms"
+                  name="bedrooms" /></label
+              ><label class="field"
+                >Casas de banho<input
+                  type="number"
+                  min="0"
+                  [(ngModel)]="property.bathrooms"
+                  name="bathrooms" /></label
+              ><label class="field"
+                >Capacidade de hóspedes<input
+                  type="number"
+                  min="1"
+                  [(ngModel)]="property.guests"
+                  name="guests" /></label
+              ><label class="field"
+                >Área (m²)<input
+                  type="number"
+                  min="0"
+                  [(ngModel)]="property.area"
+                  name="area" /></label
+              ><label class="field sm:col-span-2"
+                >Descrição<textarea
+                  rows="4"
+                  [(ngModel)]="property.description"
+                  name="description"
+                ></textarea>
+              </label>
+            </div>
+          </section>
+          <section class="edit-card">
+            <h2>Localização</h2>
+            <p class="card-copy">
+              Endereço aproximado apresentado aos hóspedes.
+            </p>
+            <div class="mt-5 grid gap-5 sm:grid-cols-2">
+              <label class="field"
+                >Província<input
+                  [(ngModel)]="property.province"
+                  name="province" /></label
+              ><label class="field"
+                >Cidade ou município<input
+                  [(ngModel)]="property.city"
+                  name="city"
+                  required /></label
+              ><label class="field"
+                >Bairro<input
+                  [(ngModel)]="property.neighborhood"
+                  name="neighborhood" /></label
+              ><label class="field"
+                >Endereço<input
+                  [(ngModel)]="property.address"
+                  name="address" /></label
+              ><label class="field sm:col-span-2"
+                >Andar<input [(ngModel)]="property.floor" name="floor"
+              /></label>
+            </div>
+          </section>
+          <section class="edit-card">
+            <h2>Comodidades</h2>
+            <div class="mt-4 grid gap-2 sm:grid-cols-2 md:grid-cols-3">
+              @for (amenity of amenityOptions; track amenity) {
+                <button
+                  type="button"
+                  class="amenity-option"
+                  [class.amenity-selected]="
+                    property.amenities.includes(amenity)
+                  "
+                  (click)="toggleAmenity(amenity)"
+                >
+                  <span>{{
+                    property.amenities.includes(amenity) ? "✓" : "+"
+                  }}</span
+                  >{{ amenity }}
+                </button>
+              }
+            </div>
+          </section>
+          <section class="edit-card">
+            <h2>Fotografias</h2>
+            <p class="card-copy">
+              Adicione imagens do alojamento e remova as que já não pretende
+              usar.
+            </p>
+            <label class="upload-button mt-4"
+              ><span>＋ Adicionar fotografias</span
+              ><input
+                type="file"
+                accept="image/*"
+                multiple
+                (change)="addPhotos($event)"
+            /></label>
+            @if (property.photos.length) {
+              <div class="photo-grid mt-5">
+                @for (photo of property.photos; track $index) {
+                  <figure class="photo-item">
+                    <img
+                      [src]="photo"
+                      [alt]="
+                        'Fotografia ' + ($index + 1) + ' de ' + property.name
+                      "
+                    /><button
+                      type="button"
+                      (click)="removePhoto($index)"
+                      [attr.aria-label]="'Remover fotografia ' + ($index + 1)"
+                    >
+                      ×
+                    </button>
+                  </figure>
+                }
+              </div>
+            } @else {
+              <p class="empty-photos mt-4">
+                Ainda não foram adicionadas fotografias.
+              </p>
+            }
+          </section>
+          <section class="edit-card">
+            <h2>Estado do anúncio</h2>
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p class="text-xs font-semibold">{{ property.status }}</p>
+                <p class="card-copy">
+                  Escolha se o anúncio fica visível ou guardado como rascunho.
+                </p>
+              </div>
+              <select
+                class="status-select"
+                [(ngModel)]="property.status"
+                name="status"
+              >
+                <option>Publicado</option>
+                <option>Rascunho</option>
+              </select>
+            </div>
+          </section>
+          <div class="flex justify-end gap-2">
+            <a routerLink="/properties" class="secondary-action">Cancelar</a
+            ><button type="submit" class="primary-action">
+              Guardar alterações
+            </button>
+          </div>
+        </form>
+      } @else {
+        <section class="edit-card mt-6 text-center">
+          <h1 class="text-xl font-semibold">Alojamento não encontrado</h1>
+          <a routerLink="/properties" class="back-link mt-4 inline-flex"
+            >Voltar aos alojamentos</a
+          >
+        </section>
+      }
+      <footer class="py-6 text-center text-[10px] text-[#a2aaa4]">
+        Portal de Parceiros Sava · Feito para Angola
+      </footer>
+    </div>
+    @if (notice) {
+      <div
+        role="status"
+        class="fixed bottom-5 right-5 z-50 rounded-xl bg-[#203a32] px-4 py-3 text-xs font-medium text-white shadow-xl"
+      >
+        {{ notice }}
+      </div>
+    }
+  </main>
+</div>
